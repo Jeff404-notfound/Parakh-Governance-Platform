@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Update Aadhaar Data</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#0a0f2c;
+    color:white;
+    padding:40px;
+}
+
+/* Layout */
+.container{
+    display:flex;
+    gap:60px;
+    align-items:flex-start;
+}
+
+/* Form */
+form{
+    background:rgba(0,0,0,0.7);
+    padding:30px;
+    border-radius:12px;
+    width:420px;
+}
+
+input, select, button{
+    width:100%;
+    padding:10px;
+    margin:8px 0;
+    border-radius:6px;
+    border:none;
+}
+
+button{
+    padding:12px;
+    background:cyan;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* Collage */
+.collage{
+    display:grid;
+    grid-template-columns: repeat(2, 320px);
+    gap:20px;
+}
+
+.collage img{
+    width:320px;
+    height:220px;
+    object-fit:cover;
+    border-radius:18px;
+    cursor:pointer;
+    transition:transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.collage img:hover{
+    transform:scale(1.08);
+    box-shadow:0 0 25px rgba(0,255,255,0.4);
+}
+
+/* Zoom overlay */
+#overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.75);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:1000;
+}
+
+#overlay img{
+    max-width:75%;
+    max-height:75%;
+    border-radius:18px;
+    box-shadow:0 0 35px rgba(0,255,255,0.6);
+}
+
+/* Live Tally */
+.tally{
+    margin-top:50px;
+    background:rgba(0,0,0,0.6);
+    padding:25px;
+    border-radius:14px;
+    width:760px;
+    box-shadow:0 0 25px rgba(0,255,255,0.25);
+}
+
+.tally h3{
+    color:#00f5ff;
+    margin-bottom:15px;
+}
+
+.tally span{
+    color:cyan;
+    font-weight:bold;
+}
+.impact-quote{
+    position: fixed;
+    bottom: 25px;
+    right: 30px;
+    max-width: 420px;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: rgba(255,255,255,0.85);
+    text-align: right;
+    font-style: normal;
+    z-index: 5;
+    pointer-events: none;
+}
+
+/* Optional subtle glow for visibility */
+.impact-quote::after{
+    content:"";
+    position:absolute;
+    inset:-10px;
+    background:rgba(0,255,255,0.08);
+    filter:blur(20px);
+    z-index:-1;
+}
+
+</style>
+</head>
+
+<body>
+
+<h2>📝 Aadhaar Data Update</h2>
+
+<div class="container">
+
+    <!-- LEFT: FORM -->
+    <form method="POST" action="/submit" id="aadhaarForm">
+
+        State
+        <input name="state" required>
+
+        District
+        <input name="district" required>
+
+        Gender
+        <select name="gender">
+            <option value="">Select</option>
+            <option>Male</option>
+            <option>Female</option>
+        </select>
+
+        Age
+        <input type="number" name="age" required>
+
+        Area
+        <select name="area">
+            <option value="">Select</option>
+            <option>Urban</option>
+            <option>Rural</option>
+        </select>
+
+        Centre ID
+        <input name="center">
+
+        Last Update Year
+        <input type="number" name="year">
+
+        Biometric Failed?
+        <select name="bio">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+        </select>
+
+        Total Updates
+        <input type="number" name="count">
+
+        <button>Submit Aadhaar Data</button>
+    </form>
+
+    <!-- RIGHT: IMAGE COLLAGE -->
+    <div class="collage">
+        <img src="/static/images/collage1.webp" onclick="zoom(this)">
+        <img src="/static/images/collage3.webp" onclick="zoom(this)">
+        <img src="/static/images/collage2.jpeg" onclick="zoom(this)">
+        <img src="/static/images/collage4.jpg" onclick="zoom(this)">
+    </div>
+
+</div>
+
+<!-- LIVE TALLY -->
+<div class="tally">
+    <h3>📊 Live Aadhaar Data Tally</h3>
+    <p>Age Group: <span id="ageGroup">–</span></p>
+    <p>Update Urgency: <span id="urgency">–</span></p>
+    <p>Biometric Risk: <span id="bioRisk">–</span></p>
+    <p>Record Completeness: <span id="completeness">0%</span></p>
+    <p>Fraud Risk Indicator: <span id="fraudRisk">–</span></p>
+</div>
+
+<!-- ZOOM OVERLAY -->
+<div id="overlay" onclick="closeZoom()">
+    <img id="zoomedImg">
+</div>
+
+<script>
+/* Image Zoom */
+function zoom(img){
+    document.getElementById("zoomedImg").src = img.src;
+    document.getElementById("overlay").style.display = "flex";
+}
+function closeZoom(){
+    document.getElementById("overlay").style.display = "none";
+}
+
+/* Live Tally Logic */
+const inputs = document.querySelectorAll("#aadhaarForm input, #aadhaarForm select");
+inputs.forEach(i => i.addEventListener("input", updateTally));
+
+function updateTally(){
+    const age = document.querySelector("input[name='age']").value;
+    const year = document.querySelector("input[name='year']").value;
+    const bio = document.querySelector("select[name='bio']").value;
+
+    let ageGroup = "–";
+    if(age){
+        if(age < 18) ageGroup = "Minor";
+        else if(age < 60) ageGroup = "Adult";
+        else ageGroup = "Senior Citizen";
+    }
+
+    let urgency = "–";
+    if(year){
+        const diff = new Date().getFullYear() - year;
+        urgency = diff > 10 ? "⚠ Overdue" : "Up-to-date";
+    }
+
+    let bioRisk = bio === "1" ? "High Risk" : "Low Risk";
+
+    let filled = 0;
+    inputs.forEach(i => { if(i.value) filled++; });
+    let completeness = Math.round((filled / inputs.length) * 100);
+
+    let fraudRisk = (bio === "1" && age > 60) ? "Medium Risk" : "Low Risk";
+
+    document.getElementById("ageGroup").innerText = ageGroup;
+    document.getElementById("urgency").innerText = urgency;
+    document.getElementById("bioRisk").innerText = bioRisk;
+    document.getElementById("completeness").innerText = completeness + "%";
+    document.getElementById("fraudRisk").innerText = fraudRisk;
+}
+</script>
+<!-- IMPACT QUOTE -->
+<div class="impact-quote">
+    “A secure identity is not a privilege —  
+    it is the foundation of inclusive digital governance.”
+</div>
+
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Parakh | Governance Evaluation Portal</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: "Segoe UI", Arial;
+            background: linear-gradient(-45deg, #0a0f2c, #1b2a4a, #0f3460, #16213e);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .panel {
+            background: rgba(0, 0, 0, 0.65);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+        }
+
+        h2, h3 {
+            color: #00f5ff;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        #bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        /* Floating Control Panel */
+        #controlPanel{
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 15px;
+            box-shadow: 0 0 25px rgba(0,255,255,0.4);
+            z-index: 10;
+        }
+
+        #controlPanel button{
+            display: block;
+            width: 170px;
+            margin: 12px 0;
+            padding: 10px;
+            background: rgba(0,255,255,0.15);
+            border: 1px solid cyan;
+            color: #00f5ff;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        #controlPanel button:hover{
+            background: cyan;
+            color: black;
+        }
+
+        /* Trademark Footer */
+        .trademark{
+            margin-top:40px;
+            padding-top:15px;
+            border-top:1px solid rgba(255,255,255,0.1);
+            text-align:center;
+            font-size:13px;
+            color:rgba(255,255,255,0.6);
+        }
+    </style>
+</head>
+
+<body>
+
+<canvas id="bg"></canvas>
+
+<!-- Floating Panel -->
+<div id="controlPanel">
+    <button onclick="updateData()">Update Data</button>
+    <button onclick="aboutUs()">About</button>
+    <button onclick="helpDesk()">Help Desk</button>
+</div>
+
+<!-- HEADER -->
+<div class="panel">
+    <h2>PARAKH</h2>
+    <p><b>Governance Evaluation & Intelligence Platform</b></p>
+</div>
+
+<!-- CHART -->
+<div class="panel">
+    <canvas id="stateChart"></canvas>
+</div>
+
+<!-- PROBLEMS -->
+<div class="panel">
+    <h3>🚨 Identified Risk & Gap Areas</h3>
+    <ul id="problems"></ul>
+</div>
+
+<!-- POLICY -->
+<div class="panel">
+    <h3>🏛 Policy Recommendations</h3>
+    <ul id="policy"></ul>
+</div>
+
+<!-- TRADEMARK -->
+<div class="trademark">
+    © 2026 Parakh. Developed as an academic prototype for research and evaluation purposes.
+</div>
+
+<script src="/static/dashboard.js"></script>
+
+<script>
+/* Floating Data Background */
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let dots = Array.from({length:80}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 2 + 1,
+    dx: (Math.random() - 0.5) * 0.4,
+    dy: (Math.random() - 0.5) * 0.4
+}));
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    dots.forEach(d => {
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(0, 255, 255, 0.4)";
+        ctx.fill();
+        d.x += d.dx;
+        d.y += d.dy;
+
+        if (d.x < 0 || d.x > canvas.width) d.dx *= -1;
+        if (d.y < 0 || d.y > canvas.height) d.dy *= -1;
+    });
+    requestAnimationFrame(animate);
+}
+animate();
+
+/* Control Panel Functions */
+function updateData(){
+    window.location.href = "/update";
+}
+
+function aboutUs(){
+    window.location.href = "/about";
+}
+
+function helpDesk(){
+    window.location.href = "/help";
+}
+</script>
+
+</body>
+</html>

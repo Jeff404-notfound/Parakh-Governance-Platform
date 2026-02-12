@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Aadhaar Help Desk</title>
+
+<style>
+body{
+    background:#0a0f2c;
+    color:white;
+    font-family:"Segoe UI",Arial;
+    padding:40px;
+}
+
+h2, h3{
+    color:#00f5ff;
+}
+
+.panel{
+    background:rgba(0,0,0,0.7);
+    padding:30px;
+    border-radius:12px;
+    width:520px;
+    margin-bottom:30px;
+}
+
+input, textarea, select{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border-radius:6px;
+    border:none;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    background:cyan;
+    border:none;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* FAQ Section */
+.faq-section{
+    background:rgba(0,0,0,0.6);
+    padding:25px;
+    border-radius:14px;
+    width:720px;
+    margin-top:40px;
+}
+
+.faq-item{
+    margin-bottom:12px;
+}
+
+.faq-question{
+    width:100%;
+    text-align:left;
+    background:rgba(0,255,255,0.12);
+    border:none;
+    padding:14px;
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+    border-radius:8px;
+}
+
+.faq-answer{
+    display:none;
+    padding:14px;
+    background:rgba(255,255,255,0.06);
+    border-radius:8px;
+    margin-top:6px;
+    color:#ddd;
+}
+
+/* Process Section */
+.process-section{
+    background:rgba(0,0,0,0.6);
+    padding:25px;
+    border-radius:14px;
+    width:720px;
+    margin-top:40px;
+}
+
+.process-section ol{
+    padding-left:22px;
+}
+
+.process-section li{
+    margin:10px 0;
+    color:#ddd;
+}
+
+a{
+    color:cyan;
+    text-decoration:none;
+}
+</style>
+</head>
+
+<body>
+
+<h2>📞 Aadhaar Help Desk</h2>
+<p>Submit your issue and our team will assist you.</p>
+
+<!-- HELP FORM -->
+<div class="panel">
+<form method="POST" action="/help_submit">
+
+    Name
+    <input name="name" required>
+
+    Aadhaar Number
+    <input name="aadhaar" required>
+
+    Issue Type
+    <select name="type">
+        <option>Biometric Failure</option>
+        <option>Address Update</option>
+        <option>Name Correction</option>
+        <option>OTP Not Received</option>
+        <option>Enrolment Centre Issue</option>
+        <option>Other</option>
+    </select>
+
+    Describe Issue
+    <textarea name="issue" rows="4"></textarea>
+
+    <button>Submit Ticket</button>
+</form>
+</div>
+
+<!-- FAQ SECTION -->
+<div class="faq-section">
+<h3>❓ Frequently Asked Questions</h3>
+
+<div class="faq-item">
+    <button class="faq-question">How long does it take to resolve a ticket?</button>
+    <div class="faq-answer">
+        Most issues are reviewed within 24–72 working hours depending on verification requirements.
+    </div>
+</div>
+
+<div class="faq-item">
+    <button class="faq-question">Do I need to visit an Aadhaar centre after raising a ticket?</button>
+    <div class="faq-answer">
+        Only if biometric verification or document validation is required. You will be informed in advance.
+    </div>
+</div>
+
+<div class="faq-item">
+    <button class="faq-question">Is my Aadhaar data secure on this platform?</button>
+    <div class="faq-answer">
+        Yes. Submitted information is used strictly for service support and system improvement purposes.
+    </div>
+</div>
+
+<div class="faq-item">
+    <button class="faq-question">Can I track the status of my complaint?</button>
+    <div class="faq-answer">
+        Complaint status tracking is currently under development in this prototype.
+    </div>
+</div>
+
+<div class="faq-item">
+    <button class="faq-question">What issues can be raised through the Help Desk?</button>
+    <div class="faq-answer">
+        Biometric failures, update issues, OTP problems, enrolment centre concerns, and data correction queries.
+    </div>
+</div>
+
+</div>
+
+<!-- PROCESS SECTION -->
+<div class="process-section">
+<h3>🛠 What Happens After You Submit a Ticket?</h3>
+<ol>
+    <li>Your issue is securely logged in the system</li>
+    <li>Preliminary validation of the request is performed</li>
+    <li>The support team reviews the issue</li>
+    <li>Resolution or guidance is provided to the user</li>
+</ol>
+</div>
+
+<br>
+<a href="/">⬅ Back to Dashboard</a>
+
+<script>
+document.querySelectorAll(".faq-question").forEach(btn => {
+    btn.addEventListener("click", () => {
+        const answer = btn.nextElementSibling;
+        const isOpen = answer.style.display === "block";
+
+        document.querySelectorAll(".faq-answer").forEach(a => a.style.display = "none");
+
+        if (!isOpen) {
+            answer.style.display = "block";
+        }
+    });
+});
+</script>
+
+</body>
+</html>

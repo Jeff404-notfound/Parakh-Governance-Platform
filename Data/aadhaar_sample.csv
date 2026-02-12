@@ -1,0 +1,12 @@
+state,district,gender,age,area,center_id,last_update_year,biometric_failed,updates_count
+MP,Bhopal,Male,34,Urban,C101,2017,0,3
+MP,Bhopal,Female,29,Urban,C101,2014,1,5
+MP,Bhopal,Male,61,Urban,C101,2012,1,7
+MP,Indore,Male,55,Rural,C202,2013,1,6
+MP,Indore,Female,47,Rural,C202,2014,1,5
+UP,Kanpur,Male,30,Urban,C303,2020,0,1
+UP,Kanpur,Female,28,Urban,C303,2021,0,1
+UP,Kanpur,Male,29,Urban,C303,2021,0,1
+Bihar,Gaya,Female,65,Rural,C404,2010,1,8
+Bihar,Gaya,Male,63,Rural,C404,2011,1,7
+Bihar,Patna,Male,22,Urban,C505,2022,0,0
