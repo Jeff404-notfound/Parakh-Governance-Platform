@@ -1,13 +1,21 @@
 from flask import Flask, render_template, jsonify, request, redirect
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
+import os
 
 app = Flask(__name__)
+
+# ✅ Absolute path setup (VERY IMPORTANT FOR RENDER)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_PATH = os.path.join(BASE_DIR, "data", "aadhaar_sample.csv")
+HELPDESK_PATH = os.path.join(BASE_DIR, "data", "helpdesk.csv")
+
 
 # ------------------ AI + DATA LOADER ------------------
 
 def load_and_train():
-    df = pd.read_csv("data/aadhaar_sample.csv")
+
+    df = pd.read_csv(DATA_PATH)
 
     df["area"] = df["area"].map({"Urban": 1, "Rural": 0})
     df["gender"] = df["gender"].map({"Male": 1, "Female": 0})
@@ -25,7 +33,9 @@ def load_and_train():
 
     return df, model_update, model_fraud
 
+
 df, model_update, model_fraud = load_and_train()
+
 
 # ------------------ ROUTES ------------------
 
@@ -33,20 +43,26 @@ df, model_update, model_fraud = load_and_train()
 def home():
     return render_template("index.html")
 
+
 @app.route("/update")
 def update_page():
     return render_template("update.html")
+
 
 @app.route("/about")
 def about():
     return render_template("about.html")
 
+
 @app.route("/help")
 def help_page():
     return render_template("help.html")
 
+
+# ✅ HELP DESK
 @app.route("/help_submit", methods=["POST"])
 def help_submit():
+
     ticket = {
         "name": request.form["name"],
         "aadhaar": request.form["aadhaar"],
@@ -54,18 +70,22 @@ def help_submit():
         "issue": request.form["issue"]
     }
 
-    try:
-        df_help = pd.read_csv("data/helpdesk.csv")
-    except:
+    # Create file if not exists
+    if not os.path.exists(HELPDESK_PATH):
         df_help = pd.DataFrame(columns=["name", "aadhaar", "type", "issue"])
+    else:
+        df_help = pd.read_csv(HELPDESK_PATH)
 
     df_help = pd.concat([df_help, pd.DataFrame([ticket])], ignore_index=True)
-    df_help.to_csv("data/helpdesk.csv", index=False)
+    df_help.to_csv(HELPDESK_PATH, index=False)
 
     return render_template("help_success.html")
 
+
+# ✅ DATA UPDATE
 @app.route("/submit", methods=["POST"])
 def submit():
+
     global df, model_update, model_fraud
 
     new = {
@@ -80,13 +100,16 @@ def submit():
         "updates_count": int(request.form["count"])
     }
 
-    data = pd.read_csv("data/aadhaar_sample.csv")
-    data = pd.concat([data, pd.DataFrame([new])], ignore_index=True)
-    data.to_csv("data/aadhaar_sample.csv", index=False)
+    data = pd.read_csv(DATA_PATH)
 
+    data = pd.concat([data, pd.DataFrame([new])], ignore_index=True)
+    data.to_csv(DATA_PATH, index=False)
+
+    # retrain models
     df, model_update, model_fraud = load_and_train()
 
     return redirect("/")
+
 
 @app.route("/stats")
 def stats():
@@ -95,8 +118,10 @@ def stats():
         "gender": df["gender"].value_counts().to_dict()
     })
 
+
 @app.route("/problems")
 def problems():
+
     under_served = df.groupby("district")["update_pred"].mean()
     under = under_served[under_served > 0.6].index.tolist()
 
@@ -107,16 +132,20 @@ def problems():
         "fraud_centers": fraud_centers
     })
 
+
 @app.route("/policy")
 def policy():
+
     recs = []
 
     load = df.groupby("district")["updates_count"].sum()
-    for d, l in load.items():
+
+    for d,o, l in load.items():
         if l > 12:
             recs.append(f"Open new Aadhaar centres in {d}")
 
     women = df[(df["gender"] == 0) & (df["update_pred"] == 1)]
+
     for d in women["district"].unique():
         recs.append(f"Run women Aadhaar update drive in {d}")
 
@@ -124,6 +153,7 @@ def policy():
         recs.append(f"Audit Aadhaar centre {c}")
 
     return jsonify(recs)
+
 
 # ------------------ RUN SERVER ------------------
 
